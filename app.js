@@ -1,8 +1,8 @@
 // --- DERS AYARLARI ---
 const CONFIG = {
-    pdfUrl: 'matematik_sorular.pdf',     // PDF dosyasının adı
-    dataPrefix: 'matematik_data_',       // JSON dosyalarının ön eki
-    chunkSize: 150                       // Konsoldaki sayı ile aynı olmalı!
+    pdfUrl: 'matematik_sorular.pdf',     // PDF dosyasının tam adı (Büyük/küçük harfe dikkat!)
+    dataPrefix: 'matematik_data_',       // JSON parçalarının ön eki
+    chunkSize: 150                       // JSON oluştururken kullandığın sayı (150 yapmıştık)
 };
 
 // --- DEĞİŞKENLER ---
@@ -15,36 +15,31 @@ let canvas = document.getElementById('the-canvas');
 let ctx = canvas.getContext('2d');
 
 // Veri Havuzu
-let loadedSolutions = {}; // İndirilen veriler burada birikir
-let loadedChunks = [];    // Hangi paketlerin indiğini tutar
+let loadedSolutions = {}; 
+let loadedChunks = [];    
 let currentAnswer = null;
 
 // --- İÇİNDEKİLER ---
-// Burayı kendi listene göre doldurabilirsin
 const tocData = [
     { title: "İç Kapak", page: 1 },
-    { title: "Künye", page: 2 },
-    // ... Liste devamı ...
     { title: "Bitiş", page: 1093 }
+    // Buraya kendi listeni ekle
 ];
 
-// --- 1. AKILLI YÜKLEME SİSTEMİ ---
+// --- 1. AKILLI YÜKLEME SİSTEMİ (JSON) ---
 async function ensureSolutionLoaded(pNum) {
-    // Sayfa 305 -> 3. Pakete denk gelir (305 / 150 = 2.03 -> tavanı 3)
     const chunkId = Math.ceil(pNum / CONFIG.chunkSize);
     
-    // Eğer bu paket daha önce indirilmediyse indir
     if (!loadedChunks.includes(chunkId)) {
         try {
+            // Örn: matematik_data_1.json dosyasını çağırır
             const fileName = `${CONFIG.dataPrefix}${chunkId}.json`;
             console.log(`${fileName} yükleniyor...`);
             
             const response = await fetch(fileName);
-            if (!response.ok) throw new Error("Dosya bulunamadı");
+            if (!response.ok) throw new Error(`Dosya bulunamadı: ${fileName}`);
             
             const newData = await response.json();
-            
-            // Yeni verileri hafızaya ekle
             Object.assign(loadedSolutions, newData);
             loadedChunks.push(chunkId);
             console.log("Paket yüklendi.");
@@ -63,9 +58,8 @@ function renderPage(num) {
     resetOpticForm();
     document.getElementById('pageInfo').innerText = `Sayfa: ${num}`;
     
-    // Arka planda veriyi kontrol et (yoksa indir)
+    // Veriyi kontrol et
     ensureSolutionLoaded(num).then(() => {
-        // Veri geldikten sonra cevabı ayarla
         if (loadedSolutions[num] && loadedSolutions[num].a) {
             currentAnswer = loadedSolutions[num].a;
         } else {
@@ -73,10 +67,9 @@ function renderPage(num) {
         }
     });
 
+    // PDF Yükleme
     pdfDoc.getPage(num).then(function(page) {
-        // PC ve Mobil için ölçekleme
         let currentScale = window.innerWidth < 768 ? 0.6 : scale;
-        
         var viewport = page.getViewport({scale: currentScale});
         canvas.height = viewport.height;
         canvas.width = viewport.width;
@@ -86,7 +79,8 @@ function renderPage(num) {
             viewport: viewport
         };
         
-        page.render(renderContext).promise.then(function() {
+        var renderTask = page.render(renderContext);
+        renderTask.promise.then(function() {
             pageRendering = false;
             if (pageNumPending !== null) {
                 renderPage(pageNumPending);
@@ -114,7 +108,7 @@ function goToPage(num) {
     if(bsOffcanvas) bsOffcanvas.hide();
 }
 
-// --- 3. ARAYÜZ ---
+// --- 3. ARAYÜZ FONKSİYONLARI ---
 function buildTOC() {
     const list = document.getElementById('tocList');
     if (typeof tocData !== 'undefined') {
@@ -137,12 +131,10 @@ function resetOpticForm() {
 document.querySelectorAll('.optik-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         if (!currentAnswer && !loadedSolutions[pageNum]) {
-            alert("Veriler yükleniyor, lütfen bekleyin...");
-            return;
+            alert("Veriler yükleniyor..."); return;
         }
         if (!currentAnswer) {
-            alert("Bu sayfa için cevap anahtarı yok.");
-            return;
+            alert("Cevap anahtarı yok."); return;
         }
 
         const selected = this.getAttribute('data-opt');
@@ -154,7 +146,6 @@ document.querySelectorAll('.optik-btn').forEach(btn => {
         } else {
             this.classList.remove('btn-light');
             this.classList.add('btn-danger-opt');
-            
             const correctBtn = document.querySelector(`.optik-btn[data-opt="${currentAnswer}"]`);
             if(correctBtn) {
                 correctBtn.classList.remove('btn-light');
@@ -177,13 +168,17 @@ async function showSolution() {
         contentDiv.innerHTML = loadedSolutions[pageNum].c;
         if(window.MathJax) MathJax.typesetPromise([contentDiv]);
     } else {
-        contentDiv.innerHTML = `<div class="alert alert-warning">Bu sayfa için çözüm bulunamadı.</div>`;
+        contentDiv.innerHTML = `<div class="alert alert-warning">Çözüm bulunamadı.</div>`;
     }
 }
 
-// --- BAŞLAT ---
+// --- BAŞLATMA ---
+// PDF adını buradan okuyup başlatıyor
 pdfjsLib.getDocument(CONFIG.pdfUrl).promise.then(function(pdfDoc_) {
     pdfDoc = pdfDoc_;
     buildTOC();
     renderPage(pageNum);
+}).catch(function(error) {
+    console.error("PDF Yüklenemedi! Dosya ismini kontrol et:", error);
+    alert("PDF dosyası bulunamadı. Lütfen dosya isminin 'matematik_sorular.pdf' olduğundan emin olun.");
 });
