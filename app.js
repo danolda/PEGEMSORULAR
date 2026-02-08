@@ -5,6 +5,7 @@ const CONFIG = {
     chunkSize: 150
 };
 
+
 // --- DEĞİŞKENLER ---
 let pdfDoc = null;
 let pageNum = 1;
