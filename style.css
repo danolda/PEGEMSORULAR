@@ -93,3 +93,35 @@ canvas {
 /* Markdown İçerik */
 .markdown-body img { max-width: 100%; border-radius: 5px; margin: 10px 0; }
 .markdown-body h3 { border-bottom: 2px solid #0d6efd; padding-bottom: 5px; margin-top: 20px; color: #0d6efd; }
+
+/* DERS KARTLARI */
+.subject-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.subject-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.card-cover {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Renkli kapaklar için */
+.bg-primary { background: linear-gradient(45deg, #0d6efd, #0a58ca) !important; }
+.bg-danger { background: linear-gradient(45deg, #dc3545, #b02a37) !important; }
+.bg-warning { background: linear-gradient(45deg, #ffc107, #ffca2c) !important; }
+.bg-success { background: linear-gradient(45deg, #198754, #157347) !important; }
+.bg-info { background: linear-gradient(45deg, #0dcaf0, #3dd5f3) !important; }
+
+/* Çözücü ekranı gizleme class'ı */
+.d-none { display: none !important; }
