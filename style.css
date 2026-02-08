@@ -6,14 +6,18 @@ body {
     flex-direction: column;
 }
 
+/* Ana İçerik Alanı */
 .main-container {
     flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: auto;
     position: relative;
-    padding-bottom: 80px; /* Alt bar için boşluk */
+    overflow-y: auto;  /* Dikey kaydırmaya izin ver */
+    overflow-x: hidden; /* Yatay kaydırmayı engelle */
+    display: flex;
+    justify-content: center; /* Yatayda ortala */
+    align-items: flex-start; /* KRİTİK AYAR: Dikeyde EN ÜSTTEN başla (Ortalama yapma!) */
+    padding-top: 30px; /* Üst menü ile arasına biraz boşluk koy */
+    padding-bottom: 120px; /* Alt bar için geniş boşluk */
+    background-color: #525659;
 }
 
 #pdf-wrapper {
