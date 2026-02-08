@@ -1,0 +1,91 @@
+body {
+    background-color: #525659; /* PDF Viewer standart arka planı */
+    overflow: hidden; /* Sayfa kaydırmayı engelle, sadece PDF kayar */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    position: relative;
+    padding-bottom: 80px; /* Alt bar için boşluk */
+}
+
+#pdf-wrapper {
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Sayfa Çevirme Butonları */
+.nav-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    padding: 20px 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 100;
+    border-radius: 5px;
+}
+.nav-btn:hover { background: rgba(0, 0, 0, 0.6); }
+.prev-btn { left: 10px; }
+.next-btn { right: 10px; }
+
+/* Alt Bar (Optik Form) */
+.bottom-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    padding: 10px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.btn-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: bold;
+    margin: 0 2px;
+    border: 2px solid transparent;
+}
+
+/* Doğru/Yanlış Renkleri */
+.btn-success-opt { background-color: #198754 !important; color: white !important; border-color: #198754; }
+.btn-danger-opt { background-color: #dc3545 !important; color: white !important; border-color: #dc3545; }
+
+/* İçindekiler Listesi */
+.list-group-item { cursor: pointer; }
+.list-group-item:hover { background-color: #f8f9fa; }
+.page-badge { float: right; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
+
+/* Çözüm Paneli */
+.offcanvas-end { width: 40% !important; }
+@media (max-width: 768px) {
+    .offcanvas-end { width: 90% !important; }
+    .bottom-bar { width: 95%; justify-content: space-between; border-radius: 10px; }
+}
+
+/* Markdown İçerik */
+.markdown-body img { max-width: 100%; border-radius: 5px; margin: 10px 0; }
+.markdown-body h3 { border-bottom: 2px solid #0d6efd; padding-bottom: 5px; margin-top: 20px; color: #0d6efd; }
