@@ -3,103 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İnteraktif Çözümlü Soru Bankası</title>
-    <!-- Bootstrap CSS -->
+    <title>Dijital Soru Bankası</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Özel CSS -->
     <link rel="stylesheet" href="style.css">
     
-    
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
-    
-    <!-- MathJax (Formüller için) -->
-    <script>
-        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
-    </script>
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
-    <!-- Üst Menü -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
-        <div class="container-fluid">
-            <button class="btn btn-outline-light me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocPanel">
-                <i class="fa-solid fa-list"></i> İçindekiler
-            </button>
-            <span class="navbar-brand mx-auto" id="bookTitle">Dijital Soru Bankası</span>
-            <span class="text-white" id="pageInfo">Sayfa: 1</span>
+    <!-- 1. BÖLÜM: ANA MENÜ (DERS SEÇİMİ) -->
+    <div id="main-menu" class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-white">📚 Dijital Soru Bankası</h1>
+            <p class="lead text-light">Çözmek istediğiniz dersi seçiniz.</p>
         </div>
-    </nav>
 
-    <!-- Ana İçerik -->
-    <div class="main-container">
-        <!-- PDF Görüntüleyici -->
-        <div id="pdf-wrapper">
-            <canvas id="the-canvas"></canvas>
-            
-            <!-- Sayfa Çevirme Butonları (Overlay) -->
-            <button class="nav-btn prev-btn" onclick="changePage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="nav-btn next-btn" onclick="changePage(1)"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-    </div>
+        <div class="row g-4 justify-content-center">
+            <!-- Matematik -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 subject-card" onclick="loadSubject('matematik')">
+                    <div class="card-cover bg-primary">
+                        <i class="fa-solid fa-calculator fa-3x text-white"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Matematik</h5>
+                        <p class="card-text small text-muted">1093 Sayfa</p>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Alt Kontrol Paneli (Cevap Anahtarı) -->
-    <div class="bottom-bar">
-        <div class="answer-buttons" id="optikForm">
-            <span class="me-2 fw-bold text-white">Cevabınız:</span>
-            <button class="btn btn-circle btn-light optik-btn" data-opt="A">A</button>
-            <button class="btn btn-circle btn-light optik-btn" data-opt="B">B</button>
-            <button class="btn btn-circle btn-light optik-btn" data-opt="C">C</button>
-            <button class="btn btn-circle btn-light optik-btn" data-opt="D">D</button>
-            <button class="btn btn-circle btn-light optik-btn" data-opt="E">E</button>
-        </div>
-        <div class="action-buttons ms-3">
-            <button class="btn btn-warning" onclick="showSolution()"><i class="fa-solid fa-lightbulb"></i> Çözümü Gör</button>
-        </div>
-    </div>
+            <!-- Türkçe (Gelecek) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 subject-card" onclick="loadSubject('turkce')">
+                    <div class="card-cover bg-danger">
+                        <i class="fa-solid fa-book-open fa-3x text-white"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Türkçe</h5>
+                        <p class="card-text small text-muted">Yakında...</p>
+                    </div>
+                </div>
+            </div>
 
-<!-- SOL PANEL: İçindekiler -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="tocPanel">
-    <div class="offcanvas-header bg-light">
-        <h5 class="offcanvas-title">İçindekiler</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    
-    <!-- Arama Kutusu ve Liste -->
-    <div class="offcanvas-body p-3">
-        <div class="mb-3">
-            <input type="text" id="index_search_input" class="form-control form-control-solid" placeholder="Konu ara..." onkeyup="filterTOC(this)">
-        </div>
-        <div class="list-group list-group-flush" id="index_list">
-            <!-- Burası JS ile dolacak -->
-        </div>
-    </div>
-</div>
+            <!-- Tarih (Gelecek) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 subject-card" onclick="loadSubject('tarih')">
+                    <div class="card-cover bg-warning">
+                        <i class="fa-solid fa-landmark fa-3x text-white"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Tarih</h5>
+                        <p class="card-text small text-muted">Yakında...</p>
+                    </div>
+                </div>
+            </div>
 
-    <!-- SAĞ PANEL: Çözüm Anlatımı -->
-    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="solutionPanel" data-bs-scroll="true" data-bs-backdrop="false">
-        <div class="offcanvas-header bg-primary text-white">
-            <h5 class="offcanvas-title"><i class="fa-solid fa-chalkboard-user"></i> Soru Çözümü</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div id="solutionContent" class="markdown-body">
-                <!-- Çözüm buraya yüklenecek -->
-                <div class="text-center text-muted mt-5">
-                    <i class="fa-solid fa-spinner fa-spin fa-3x"></i>
-                    <p>Çözüm yükleniyor veya bu sayfa için çözüm yok.</p>
+            <!-- Coğrafya (Gelecek) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 subject-card" onclick="loadSubject('cografya')">
+                    <div class="card-cover bg-success">
+                        <i class="fa-solid fa-earth-europe fa-3x text-white"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Coğrafya</h5>
+                        <p class="card-text small text-muted">Yakında...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vatandaşlık (Gelecek) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 subject-card" onclick="loadSubject('vatandaslik')">
+                    <div class="card-cover bg-info">
+                        <i class="fa-solid fa-scale-balanced fa-3x text-white"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Vatandaşlık</h5>
+                        <p class="card-text small text-muted">Yakında...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+
+    <!-- 2. BÖLÜM: SORU ÇÖZME EKRANI (Başlangıçta Gizli) -->
+    <div id="solver-view" class="d-none">
+        
+        <!-- Üst Menü -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
+            <div class="container-fluid">
+                <button class="btn btn-outline-light me-2" onclick="returnToMenu()">
+                    <i class="fa-solid fa-arrow-left"></i> Menü
+                </button>
+                <button class="btn btn-outline-light me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocPanel">
+                    <i class="fa-solid fa-list"></i> Konular
+                </button>
+                <span class="navbar-brand mx-auto" id="bookTitle">Ders Adı</span>
+                <span class="text-white" id="pageInfo">Sayfa: 1</span>
+            </div>
+        </nav>
+
+        <!-- PDF Alanı -->
+        <div class="main-container">
+            <div id="pdf-wrapper">
+                <canvas id="the-canvas"></canvas>
+                <button class="nav-btn prev-btn" onclick="changePage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="nav-btn next-btn" onclick="changePage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Alt Bar -->
+        <div class="bottom-bar">
+            <div class="answer-buttons" id="optikForm">
+                <span class="me-2 fw-bold text-white d-none d-md-inline">Cevap:</span>
+                <button class="btn btn-circle btn-light optik-btn" data-opt="A">A</button>
+                <button class="btn btn-circle btn-light optik-btn" data-opt="B">B</button>
+                <button class="btn btn-circle btn-light optik-btn" data-opt="C">C</button>
+                <button class="btn btn-circle btn-light optik-btn" data-opt="D">D</button>
+                <button class="btn btn-circle btn-light optik-btn" data-opt="E">E</button>
+            </div>
+            <div class="action-buttons ms-3">
+                <button class="btn btn-warning" onclick="showSolution()"><i class="fa-solid fa-lightbulb"></i> <span class="d-none d-md-inline">Çözüm</span></button>
+            </div>
+        </div>
+
+        <!-- SOL PANEL: İçindekiler -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="tocPanel">
+            <div class="offcanvas-header bg-light">
+                <h5 class="offcanvas-title">İçindekiler</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body p-3">
+                <input type="text" class="form-control mb-3" placeholder="Konu ara..." onkeyup="filterTOC(this)">
+                <div class="list-group list-group-flush" id="index_list"></div>
+            </div>
+        </div>
+
+        <!-- SAĞ PANEL: Çözüm -->
+        <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="solutionPanel" data-bs-scroll="true" data-bs-backdrop="false">
+            <div class="offcanvas-header bg-primary text-white">
+                <h5 class="offcanvas-title">Soru Çözümü</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div id="solutionContent" class="markdown-body"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Ana Mantık -->
     <script src="app.js"></script>
 </body>
 </html>
