@@ -61,18 +61,23 @@
         </div>
     </div>
 
-    <!-- SOL PANEL: İçindekiler -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="tocPanel">
-        <div class="offcanvas-header bg-light">
-            <h5 class="offcanvas-title">İçindekiler</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+<!-- SOL PANEL: İçindekiler -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="tocPanel">
+    <div class="offcanvas-header bg-light">
+        <h5 class="offcanvas-title">İçindekiler</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    
+    <!-- Arama Kutusu ve Liste -->
+    <div class="offcanvas-body p-3">
+        <div class="mb-3">
+            <input type="text" id="index_search_input" class="form-control form-control-solid" placeholder="Konu ara..." onkeyup="filterTOC(this)">
         </div>
-        <div class="offcanvas-body p-0">
-            <div class="list-group list-group-flush" id="tocList">
-                <!-- Burası JS ile doldurulacak -->
-            </div>
+        <div class="list-group list-group-flush" id="index_list">
+            <!-- Burası JS ile dolacak -->
         </div>
     </div>
+</div>
 
     <!-- SAĞ PANEL: Çözüm Anlatımı -->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="solutionPanel" data-bs-scroll="true" data-bs-backdrop="false">
