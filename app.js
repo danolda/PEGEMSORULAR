@@ -202,6 +202,10 @@ function loadSubject(subjectKey) {
     
     // Doğru içindekiler listesini seç
     currentTOC = ALL_TOC_DATA[subjectKey] || [];
+
+    // BU SATIRI EKLE (Menüyü gizle, viewer moduna geç):
+    document.body.classList.add('viewer-active');
+    
     
     // Ekranları değiştir
     document.getElementById('main-menu').classList.add('d-none');
@@ -220,6 +224,8 @@ function loadSubject(subjectKey) {
 function returnToMenu() {
     document.getElementById('main-menu').classList.remove('d-none');
     document.getElementById('solver-view').classList.add('d-none');
+    / BU SATIRI EKLE (Viewer modundan çık, scroll'u aç):
+    document.body.classList.remove('viewer-active');
     if(pdfDoc) {
         pdfDoc.destroy(); // Hafızayı temizle
         pdfDoc = null;
