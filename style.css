@@ -1,28 +1,118 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --dark-bg: #2b2d2f;
+    --glass-bg: rgba(33, 37, 41, 0.85);
+    --card-hover-transform: translateY(-5px);
+}
+
 body {
-    background-color: #525659; /* PDF Viewer standart arka planı */
-    overflow: hidden; /* Sayfa kaydırmayı engelle, sadece PDF kayar */
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Varsayılan olarak scroll serbest */
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* --- VIEWER MODE (PDF AÇIKKEN) --- */
+/* Bu sınıf JS ile body'ye eklenecek */
+body.viewer-active {
+    overflow: hidden; /* Sadece PDF modunda sayfa kaymasını kilitle */
+    background-color: var(--dark-bg);
+}
+
+/* --- ANA MENÜ TASARIMI --- */
+#main-menu {
+    min-height: 100vh;
+    background: var(--primary-gradient);
+    padding-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.main-header h1 {
+    font-weight: 800;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Kart Tasarımı */
+.subject-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    background: white;
+    cursor: pointer;
+}
+
+.subject-card:hover {
+    transform: var(--card-hover-transform);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.subject-card:active {
+    transform: scale(0.98);
+}
+
+.card-cover {
+    height: 120px; /* Mobilde çok yer kaplamasın diye küçülttük */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.card-cover i {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    transition: transform 0.3s;
+}
+
+.subject-card:hover .card-cover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Renkler */
+.bg-mat { background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%); }
+.bg-turk { background: linear-gradient(45deg, #ff0844 0%, #ffb199 100%); }
+.bg-tar { background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); }
+.bg-cog { background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%); }
+.bg-vat { background: linear-gradient(45deg, #fa709a 0%, #fee140 100%); }
+
+.card-title {
+    font-weight: 700;
+    margin-bottom: 0;
+    color: #333;
+}
+
+/* --- PDF VIEWER ALANI --- */
+#solver-view {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: var(--dark-bg);
 }
 
-/* Ana İçerik Alanı */
 .main-container {
     flex-grow: 1;
     position: relative;
-    overflow-y: auto;  /* Dikey kaydırmaya izin ver */
-    overflow-x: hidden; /* Yatay kaydırmayı engelle */
+    overflow-y: auto; /* PDF'in kendi içinde kayması için */
+    overflow-x: hidden;
     display: flex;
-    justify-content: center; /* Yatayda ortala */
-    align-items: flex-start; /* KRİTİK AYAR: Dikeyde EN ÜSTTEN başla (Ortalama yapma!) */
-    padding-top: 30px; /* Üst menü ile arasına biraz boşluk koy */
-    padding-bottom: 120px; /* Alt bar için geniş boşluk */
-    background-color: #525659;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    padding-bottom: 140px; /* Alt bar payı */
+    
+    /* TELEFONDAKİ ÇİFT DOKUNMA ZOOMUNU KAPATIR, PINCH AÇIK KALIR */
+    touch-action: pan-x pan-y pinch-zoom; 
 }
 
 #pdf-wrapper {
     position: relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 canvas {
@@ -31,97 +121,81 @@ canvas {
     height: auto;
 }
 
-/* Sayfa Çevirme Butonları */
+/* Navigasyon Butonları (Sağ/Sol) */
 .nav-btn {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.3);
     border: none;
     color: white;
-    font-size: 2rem;
+    font-size: 1.5rem;
     padding: 20px 10px;
     cursor: pointer;
     transition: 0.3s;
-    z-index: 100;
-    border-radius: 5px;
+    z-index: 90;
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
 }
-.nav-btn:hover { background: rgba(0, 0, 0, 0.6); }
+.nav-btn:hover { background: rgba(0, 0, 0, 0.7); }
 .prev-btn { left: 10px; }
 .next-btn { right: 10px; }
 
-/* Alt Bar (Optik Form) */
+/* ALT BAR (OPTİK FORM & İŞLEMLER) */
 .bottom-bar {
     position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #333;
-    padding: 10px 20px;
-    border-radius: 50px;
+    width: 95%;
+    max-width: 600px;
+    background: var(--glass-bg); /* Yarı saydam */
+    backdrop-filter: blur(10px); /* Buzlu cam efekti */
+    padding: 10px 15px;
+    border-radius: 20px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1000;
 }
 
+/* Optik Butonlar */
+.answer-buttons {
+    display: flex;
+    gap: 5px;
+}
+
 .btn-circle {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     font-weight: bold;
-    margin: 0 2px;
-    border: 2px solid transparent;
-}
-
-/* Doğru/Yanlış Renkleri */
-.btn-success-opt { background-color: #198754 !important; color: white !important; border-color: #198754; }
-.btn-danger-opt { background-color: #dc3545 !important; color: white !important; border-color: #dc3545; }
-
-/* İçindekiler Listesi */
-.list-group-item { cursor: pointer; }
-.list-group-item:hover { background-color: #f8f9fa; }
-.page-badge { float: right; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
-
-/* Çözüm Paneli */
-.offcanvas-end { width: 40% !important; }
-@media (max-width: 768px) {
-    .offcanvas-end { width: 90% !important; }
-    .bottom-bar { width: 95%; justify-content: space-between; border-radius: 10px; }
-}
-
-/* Markdown İçerik */
-.markdown-body img { max-width: 100%; border-radius: 5px; margin: 10px 0; }
-.markdown-body h3 { border-bottom: 2px solid #0d6efd; padding-bottom: 5px; margin-top: 20px; color: #0d6efd; }
-
-/* DERS KARTLARI */
-.subject-card {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-    background: #f8f9fa;
-}
-
-.subject-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-.card-cover {
-    height: 150px;
+    font-size: 14px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.1s;
+    /* Butonlarda çift tıklama zoomunu engelle */
+    touch-action: manipulation; 
 }
 
-/* Renkli kapaklar için */
-.bg-primary { background: linear-gradient(45deg, #0d6efd, #0a58ca) !important; }
-.bg-danger { background: linear-gradient(45deg, #dc3545, #b02a37) !important; }
-.bg-warning { background: linear-gradient(45deg, #ffc107, #ffca2c) !important; }
-.bg-success { background: linear-gradient(45deg, #198754, #157347) !important; }
-.bg-info { background: linear-gradient(45deg, #0dcaf0, #3dd5f3) !important; }
+.btn-circle:active { transform: scale(0.9); }
 
-/* Çözücü ekranı gizleme class'ı */
-.d-none { display: none !important; }
+.btn-success-opt { background-color: #00b09b !important; color: white !important; border: none; box-shadow: 0 0 10px #00b09b; }
+.btn-danger-opt { background-color: #ff5e62 !important; color: white !important; border: none; }
+
+/* Menü ve Çözüm Butonları */
+.navbar {
+    background: rgba(0,0,0,0.8) !important;
+    backdrop-filter: blur(5px);
+}
+
+.offcanvas { opacity: 0.98; }
+
+/* Markdown & İçerik */
+.markdown-body img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
+.list-group-item { background: transparent; color: #333; border-bottom: 1px solid #eee; }
+.list-group-item:hover { background: #f8f9fa; color: #007bff; }
